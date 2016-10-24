@@ -1,0 +1,45 @@
+create or replace
+ procedure BIG_PARM(p in out Rec_list) is
+ l number;
+ begin
+ p(2).c := ‘z’; — change from ‘q’ to ‘z’
+ l := 1/0; — will raise error (ie division by zero)
+ end;
+/
+declare
+ x rec_list;
+ begin
+ x := rec_list(
+ rec(1,1,’p’),
+ rec(2,2,’q’),
+ rec(3,3,’r’));
+ big_parm(x);
+ exception when others then
+ for i in 1 .. 3 loop
+ dbms_output.put_line(x(i).c);
+ end loop;
+ end;
+/
+
+create or replace
+ procedure BIG_PARM(p in out nocopy Rec_list) is
+ l number;
+ begin
+ p(2).c := ‘z’;
+ l := 1/0;
+ end;
+/
+declare
+ x rec_list;
+ begin
+ x := rec_list(
+ rec(1,1,’p’),
+ rec(2,2,’q’),
+ rec(3,3,’r’));
+ big_parm(x);
+ exception when others then
+ for i in 1 .. 3 loop
+ dbms_output.put_line(x(i).c);
+ end loop;
+ end;
+/

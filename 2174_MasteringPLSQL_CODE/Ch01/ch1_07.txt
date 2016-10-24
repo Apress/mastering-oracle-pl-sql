@@ -1,0 +1,7 @@
+begin
+for i in 1 .. 10000 loop
+gen_customer;
+end loop;
+commit;
+end;
+/

@@ -1,0 +1,12 @@
+create table x1 as select * from v$mystats;
+exec prc_main;
+create table x2 as select * from v$mystats;
+exec prc_main;
+create table x3 as select * from v$mystats;
+
+select x2.name, x3.value-x2.value NORMAL_RUN,
+ x2.value-x1.value WITH_RECOMP
+ from x1, x2, x3
+ where x2.name = x1.name
+ and x3.name = x2.name
+ order by 3;

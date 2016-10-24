@@ -1,0 +1,19 @@
+create or replace
+ function IS_EMP_THERE return varchar2 is
+ cursor C is
+ select 1 from emp
+ where hiredate > trunc(sysdate,’MM);
+ r number;
+ v varchar2(3);
+ begin
+ open C;
+ fetch C into r;
+ if C%FOUND then
+ v := ‘YES’;
+ else
+ v := ‘NO’;
+ end if;
+ close C;
+ return v;
+ end;
+/

@@ -1,0 +1,10 @@
+create or replace
+ view V$MYSTATS as
+ select s.name, m.value
+ from v$mystat m, v$statname s
+ where s.statistic# = m.statistic#;
+
+grant select on V$MYSTATS to public;
+create or replace public synonym V$MYSTATS for V$MYSTATS;
+select * from v$mystats
+where name like ‘parse%’;

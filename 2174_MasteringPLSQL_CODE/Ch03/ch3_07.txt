@@ -1,0 +1,19 @@
+declare
+ cursor c is select ename from emp ;
+ begin
+ for i in c loop
+ null;
+ end loop;
+ dbms_output.put_line(c%rowcount);
+ end;
+/
+
+declare
+ cnt pls_integer := 0;
+ begin
+ for i in (select ename from emp) loop
+ cnt := cnt + 1;
+ end loop;
+ dbms_output.put_line(cnt);
+ end;
+/

@@ -1,0 +1,27 @@
+create table SAMPLES (
+ lab_id varchar2(10),
+ animal varchar2(10),
+ experiment_id number,
+ probability number );
+set feedback off
+insert into SAMPLES values (‘OXFORD’,’RATS’,1,0.993);
+insert into SAMPLES values (‘OXFORD’,’RATS’,2,0.93);
+insert into SAMPLES values (‘OXFORD’,’RATS’,3,0.91);
+insert into SAMPLES values (‘OXFORD’,’MICE’,1,0.91);
+insert into SAMPLES values (‘OXFORD’,’MICE’,2,0.99);
+insert into SAMPLES values (‘OXFORD’,’MICE’,3,0.90);
+insert into SAMPLES values (‘HARVARD’,’RATS’,1,0.993);
+insert into SAMPLES values (‘HARVARD’,’RATS’,2,0.93);
+insert into SAMPLES values (‘HARVARD’,’RATS’,3,0.91);
+insert into SAMPLES values (‘HARVARD’,’MICE’,1,0.91);
+insert into SAMPLES values (‘HARVARD’,’MICE’,2,0.99);
+insert into SAMPLES values (‘HARVARD’,’MICE’,3,0.90);
+set feedback on
+
+SELECT lab_id, animal, experiment_id, s
+ FROM samples
+ SPREADSHEET PARTITION BY (lab_id)
+ DIMENSION BY (animal, experiment_id)
+ MEASURES (probability s) IGNORE nav
+ (s[‘MICE’,-1]=s[‘MICE’,1]*s[‘MICE’,2]*s[‘MICE’,3],
+ s[‘RATS’,-1]=s[‘RATS’,1]*s[‘RATS’,2]*s[‘RATS’,3]);

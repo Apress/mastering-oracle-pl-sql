@@ -1,0 +1,22 @@
+create or replace
+ procedure BULK_TEST is
+ mem_used number;
+ t number;
+ type recs is
+ table of ALL_OBJECTS%rowtype;
+ r recs;
+ cursor c1 is select * from ALL_OBJECTS;
+ begin
+ t := dbms_utility.get_time;
+ open c1;
+ fetch c1
+ bulk collect into r;
+ close c1;
+ select value
+ into mem_used
+ from v$mystats
+ where name = ‘session pga memory max’;
+ dbms_output.put_line(‘- Time: ‘||(dbms_utility.get_time-t));
+ dbms_output.put_line(‘- Max Mem: ‘||mem_used);
+ end;
+/

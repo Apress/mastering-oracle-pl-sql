@@ -1,0 +1,6 @@
+create table customers (
+pin_number number(6) );
+
+alter table customers
+add constraint customers_pk
+primary key (pin_number);

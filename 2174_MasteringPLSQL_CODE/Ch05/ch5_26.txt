@@ -1,0 +1,67 @@
+create or replace
+procedure STATIC_ADHOC (
+p_deptno number,
+p_dname varchar2,
+p_loc number,
+p_option number ) is
+cursor c1 is
+select * from dept
+where deptno = p_deptno;
+ cursor c2 is
+ select * from dept
+ where dname = p_dname;
+ cursor c3 is
+ select * from dept
+ where loc = p_loc;
+ cursor c7 is
+ select * from dept
+ where deptno = p_deptno or loc = p_loc;
+ cursor c8 is
+ select * from dept
+ where loc = p_loc and dname = p_dname;
+ cursor c9 is
+ select * from dept
+ where loc = p_loc or dname = p_dname;
+ cursor c13 is
+ select * from dept
+ where ( deptno = p_deptno or dname = p_dname) and loc = p_loc;
+ cursor c14 is
+ select * from dept
+ where deptno = p_deptno or ( dname = p_dname and loc = p_loc);
+ cursor c15 is
+ select * from dept
+ where deptno = p_deptno or dname = p_dname or loc = p_loc;
+ r dept%rowtype;
+ begin
+ if p_option = 1 then
+ open c1; fetch c1 into r; close c1;
+ elsif p_option = 2 then
+ open c2; fetch c2 into r; close c2;
+ elsif p_option = 3 then
+ open c3; fetch c3 into r; close c3;
+ elsif p_option = 7 then
+ open c7; fetch c7 into r; close c7;
+ elsif p_option = 8 then
+ open c8; fetch c8 into r; close c8;
+ elsif p_option = 9 then
+ open c9; fetch c9 into r; close c9;
+ elsif p_option = 13 then
+ open c13; fetch c13 into r; close c13;
+ elsif p_option = 14 then
+ open c14; fetch c14 into r; close c14;
+ elsif p_option = 15 then
+ open c15; fetch c15 into r; close c15;
+ end if;
+ end;
+/
+create or replace
+procedure DYN_ADHOC(p_where varchar2) is
+type rc is ref cursor;
+c rc;
+r dept%rowtype;
+begin
+open c for 'select * from dept where '||p_where;
+fetch c into r;
+close c;
+ end;
+/

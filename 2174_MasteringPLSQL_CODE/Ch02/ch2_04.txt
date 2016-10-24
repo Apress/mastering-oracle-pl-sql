@@ -1,0 +1,2 @@
+exec deptree_fill('TABLE',user,'EMP');
+select * from ideptree;

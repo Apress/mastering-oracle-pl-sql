@@ -1,0 +1,17 @@
+create table SRC ( x number ) pctfree 0;
+insert into SRC
+ select rownum
+ from all_objects
+ where rownum < 10000;
+
+
+create table T1 as
+ select trunc(created) created
+ from all_objects;
+
+select trunc(sysdate)-14+x created, count(created) no_of_obj
+ from t1, src
+ where trunc(sysdate)-14+x = t1.created(+)
+ and x <= 14
+ group by trunc(sysdate)-14+x
+/

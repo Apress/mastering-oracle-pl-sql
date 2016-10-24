@@ -1,0 +1,6 @@
+begin
+ for i in ( select ename from emp ) loop
+ dbms_output.put_line(i.ename);
+ end loop;
+end;
+/

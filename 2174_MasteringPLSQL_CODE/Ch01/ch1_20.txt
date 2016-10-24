@@ -1,0 +1,39 @@
+drop table EMP;
+drop table DEPT;
+create table EMP (
+ EMPNO NUMBER(8),
+ ENAME VARCHAR2(20),
+ HIREDATE DATE,
+ SAL NUMBER(7,2),
+ DEPTNO NUMBER(6) );
+create table DEPT (
+ DEPTNO NUMBER(6),
+ DNAME VARCHAR2(20) );
+alter table EMP add constraint EMP_PK
+ primary key (EMPNO);
+alter table DEPT add constraint DEPT_PK
+ primary key (DEPTNO);
+
+create table SRC ( x varchar2(10));
+
+begin
+ for i in 1 .. 200000 loop
+ insert into SRC values (‘x’);
+ end loop;
+ end;
+/
+commit;
+
+insert into EMP
+ select rownum,
+ ‘Name’||rownum,
+ sysdate+rownum/100,
+ dbms_random.value(7500,10000),
+ dbms_random.value(1,10)
+ from SRC
+ where rownum <= 500;
+
+insert into DEPT
+ select rownum, ‘Dept’||rownum
+ from SRC
+ where rownum <= 10;

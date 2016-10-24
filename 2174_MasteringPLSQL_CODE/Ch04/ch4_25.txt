@@ -1,0 +1,29 @@
+create or replace
+ package PKG is
+ procedure ADD_ROW(p_col varchar2);
+ procedure ADD_NUM_ROW(p_col number);
+ end;
+ /
+create or replace
+ package body PKG is
+ procedure ADD_ROW(p_col varchar2) is
+ begin
+ insert into TEN_BYTE_COLUMN
+ values (p_col);
+ end;
+
+ procedure ADD_NUM_ROW(p_col number) is
+ begin
+ insert into TEN_SIG_DIGITS
+ values (p_col);
+ end;
+
+ end;
+/
+
+select name, type
+ from user_dependencies
+ where referenced_name in (
+ ‘TEN_BYTE_COLUMN’,
+ ‘TEN_SIG_DIGITS’)
+ and name like ‘PKG%’;

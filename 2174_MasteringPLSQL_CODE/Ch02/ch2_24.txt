@@ -1,0 +1,68 @@
+create or replace
+ package stack is
+ type module_list is
+ table of varchar2(80)
+ index by binary_integer;
+ procedure push(module_name varchar2);
+ procedure pop;
+ procedure show_stack;
+end;
+/
+
+create or replace
+ package body stack is
+
+ m module_list;
+
+ procedure push(module_name varchar2) is
+ begin
+ m(m.count+1) := module_name;
+ end;
+
+ procedure pop is
+ begin
+ m.delete(m.count);
+ end;
+
+ procedure show_stack is
+ begin
+ for i in 1 .. m.count loop
+ dbms_output.put_line(rpad('-',i,'-')||m(i));
+ end loop;
+ end;
+
+ end;
+/
+
+create or replace
+ procedure p1 is
+ begin
+ stack.push('P1');
+ stack.show_stack;
+ stack.pop;
+ end;
+/
+create or replace
+ procedure p2 is
+ begin
+ stack.push('P2');
+ p1;
+ stack.pop;
+ end;
+/
+create or replace
+ procedure p3 is
+ begin
+ stack.push('P3');
+ p2;
+ stack.pop;
+ end;
+/
+create or replace
+ procedure p1 is
+ begin
+ dbms_output.put_line(
+ substr(dbms_utility.format_call_stack,1,255));
+ end;
+/
+

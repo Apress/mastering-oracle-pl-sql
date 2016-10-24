@@ -1,0 +1,46 @@
+create or replace
+ procedure p0 is
+ begin
+ null;
+ end;
+ /
+
+declare
+ x varchar2(32767);
+ y varchar2(32767);
+ begin
+ for i in 1 .. 50 loop
+ execute immediate
+ 'create or replace procedure prc_'||to_char(i,'fm0000')||
+ ' is begin p0; end;';
+ x := x || 'prc_'||to_char(i,'fm0000')||'; ';
+ end loop;
+ for i in 51 .. 100 loop
+ execute immediate
+ 'create or replace procedure prc_'||to_char(i,'fm0000')||
+ ' is begin '||x||' end;';
+ y := y || 'prc_'||to_char(i,'fm0000')||'; ';
+ end loop;
+ execute immediate
+ 'create or replace procedure prc_main '||
+ ' is begin '||y||' end;';
+ end;
+/
+select name, type,
+ referenced_name, referenced_type
+ from user_Dependencies
+where name like 'PRC_____'
+
+
+create or replace
+ procedure P0 is
+ x number;
+ begin
+ x := 1;
+ end;
+/
+
+select object_name, status
+ from user_Objects
+ where object_name like 'PRC%'
+/

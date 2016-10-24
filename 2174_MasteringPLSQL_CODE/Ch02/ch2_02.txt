@@ -1,0 +1,45 @@
+create or replace
+package emp_maint is
+cursor annual_review_candidates return emp%rowtype;
+v_last_empno_used number;
+procedure hire_emp(p_empno number, p_name varchar2);
+procedure fire_emp(p_empno number);
+procedure raise_salary(p_empno number, p_salary number);
+procedure hire_emp (p_empno number, p_name varchar2,
+p_hiredate date, p_sal number);
+end;
+/
+create or replace
+package body emp_maint is
+cursor annual_review_candidates return emp%rowtype is
+select * from emp where hiredate > trunc(sysdate,'YYYY');
+v_pkg_execution_count number := 0;
+procedure hire_emp(p_empno number, p_name varchar2) is
+begin
+insert into emp …
+end;
+procedure fire_emp(p_empno number) is
+begin
+delete from emp …
+end;
+procedure raise_salary(p_empno number, p_salary number) is
+begin
+update emp …
+end;
+procedure check_sal_limit(p_empno number) is
+begin
+…
+end;
+procedure hire_emp(p_empno number, p_name varchar2,
+p_hiredate date, p_sal number) is
+begin
+check_sal_limit(p_empno);
+insert into emp..
+end;
+begin
+select empno into v_last_empno_used from EMP
+where hiredate = ( select max(hiredate)
+from emp )
+and rownum = 1;
+end;
+/

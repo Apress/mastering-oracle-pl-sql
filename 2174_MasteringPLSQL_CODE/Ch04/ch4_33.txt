@@ -1,0 +1,23 @@
+create table list_of_changes
+ ( tname varchar2(30),
+ cname varchar2(30),
+ changed date);
+create or replace
+ procedure RUN_DDL(m varchar2) is
+ pragma autonomous_transaction;
+ begin
+ execute immediate m;
+ end;
+/
+create or replace
+ procedure ADD_COLUMN(p_table varchar2,
+ p_column varchar2) is
+ v number;
+ begin
+ insert into LIST_OF_CHANGES
+ values (p_table, p_column, sysdate);
+ run_ddl(
+ ‘alter table ‘||p_table||’ add ‘||p_column);
+ v := 1/0; — raises an error, rolls back insert
+ end;
+/

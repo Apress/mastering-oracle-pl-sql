@@ -1,0 +1,9 @@
+declare
+ options num_list := num_list(1,2,3,7,8,9,13,14,15);
+ v_where varchar2(500);
+ begin
+ for i in ( select dc.*, rownum r from dept_copy dc ) loop
+ STATIC_ADHOC(i.deptno, i.dname, i.loc, options(mod(i.r,9)+1));
+ end loop;
+ end;
+/

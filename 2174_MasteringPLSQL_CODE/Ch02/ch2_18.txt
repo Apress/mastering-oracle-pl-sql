@@ -1,0 +1,41 @@
+create or replace
+ procedure A(p number) is
+ begin
+ if p < 5 then
+ B(p+1);
+ end if;
+ end;
+/
+create or replace
+ procedure B(p number) is
+ begin
+ if p < 5 then
+ A(p+1);
+ end if;
+ end;
+/
+
+create package RECURSION is
+ procedure A(p number);
+ procedure B(p number);
+ end;
+/
+create or replace
+ package body RECURSION is
+
+ procedure A(p number) is
+ begin
+ if p < 5 then
+ B(p+1);
+ end if;
+ end;
+
+ procedure B(p number) is
+ begin
+ if p < 5 then
+ A(p+1);
+ end if;
+ end;
+
+ end;
+/

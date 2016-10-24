@@ -1,0 +1,38 @@
+create table T2 ( k number(5))
+create or replace package P is
+ v number := 0;
+ end;
+/
+create or replace
+ trigger T2_TRG
+ before insert on T2
+ for each row
+ begin
+ p.v := p.v + 1;
+ end;
+/
+alter session set sql_trace = true;
+insert into T2 /* no_select_in_trigger */
+ select rownum
+ from all_objects
+ where rownum <= 20000;
+alter session set sql_trace = false;
+create or replace
+ trigger T2_TRG
+ before insert on T2
+ for each row
+ declare
+ l number;
+ begin
+ select 1 into l from dual;
+ p.v := p.v + 1;
+end;
+/
+Trigger created.
+truncate table T2;
+alter session set sql_trace = true;
+insert into T2 /* with_select_in_trigger */
+ select rownum
+ from all_objects
+ where rownum <= 20000;
+alter session set sql_trace = false;

@@ -1,0 +1,11 @@
+CREATE PROCEDURE delete_rows (
+table_name IN VARCHAR2,
+condition IN VARCHAR2 DEFAULT NULL) AS
+where_clause VARCHAR2(100) := ' WHERE ' || condition;
+BEGIN
+IF condition IS NULL THEN
+where_clause := NULL;
+END IF;
+EXECUTE IMMEDIATE
+'DELETE FROM ' || table_name || where_clause;
+END;

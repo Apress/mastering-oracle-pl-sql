@@ -1,0 +1,25 @@
+create or replace
+ procedure SHOW_SAL is
+ v_sal number;
+ begin
+ for i in ( select * from staff ) loop
+ if i.class_type = 1 then
+ select fixed_price
+ into v_sal
+ from part_time_package
+ where id = i.class_id;
+ elsif i.class_type = 2 then
+ select hrs * hrly_rate
+ into v_sal
+ from contract_package
+ where id = i.class_id;
+ elsif i.class_type = 3 then — permanent
+ select annual_sal + bonus
+ into v_sal
+ from perm_package
+ where id = i.class_id;
+ end if;
+ dbms_output.put_line(rpad(i.name,20)||lpad(v_sal,10));
+ end loop;
+ end;
+/

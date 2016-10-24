@@ -1,0 +1,25 @@
+create or replace
+ package counter is
+ procedure reset;
+ procedure inc;
+ procedure show;
+ end;
+/
+create or replace
+ package body counter is
+ cnt pls_integer := 0;
+ procedure reset is
+ begin
+ cnt := 0;
+ end ;
+ procedure inc is
+ begin
+ cnt := cnt + 1;
+ end;
+ procedure show is
+ begin
+ dbms_output.put_line('Execution Count: '||cnt);
+ end;
+ end;
+/
+

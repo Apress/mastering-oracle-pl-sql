@@ -1,0 +1,9 @@
+declare
+ v_bonus number := 10000;
+ v_max_sal number;
+ begin
+ select max(sal)+v_bonus
+ into v_max_sal
+ from emp;
+ end;
+/

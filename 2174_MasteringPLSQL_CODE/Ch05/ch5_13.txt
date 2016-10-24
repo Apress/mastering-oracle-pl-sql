@@ -1,0 +1,25 @@
+select
+ case when column_id = 1 then
+ 'create or replace trigger '||table_name||
+ '_trg'||chr(10)||
+ 'after update on '||table_name||chr(10)||
+ 'for each row'||chr(10)||
+ 'declare'||chr(10)||
+ ' p_new '||table_name||'%rowtype;'||chr(10)||
+ ' p_old '||table_name||'%rowtype;'||chr(10)||
+ 'begin'||chr(10)||
+ ' p_new.'||lower(column_name)||' := :new.'||lower(column_name)||
+ ';'||chr(10)||
+ ' p_old.'||lower(column_name)||' := :old.'||lower(column_name)||';'
+ else
+ ' p_new.'||lower(column_name)||' := :new.'||lower(column_name)||
+ ';'||chr(10)||
+ ' p_old.'||lower(column_name)||' := :old.'||lower(column_name)||';'
+ end trg
+ from user_tab_columns
+ where table_name = upper('&&table_name')
+ union all
+ select ' trgproc_&&table_name(p_new,p_old);' from dual
+ union all
+ select 'end;' from dual
+/

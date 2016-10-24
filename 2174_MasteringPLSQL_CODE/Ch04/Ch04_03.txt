@@ -1,0 +1,20 @@
+create or replace
+ package APPLICATION_TYPES is
+ subtype short_varchar2 is varchar2(40);
+ end;
+/
+create or replace
+ procedure MY_PROC(p_input application_types.short_varchar2) is
+ v1 application_types.short_varchar2;
+ v2 application_types.short_varchar2;
+ v3 application_types.short_varchar2;
+ v4 application_types.short_varchar2;
+ begin
+null;
+end;
+/
+create or replace
+ package MY_PKG is
+ glob_var application_types.short_varchar2 := rpad(‘x’,40);
+ end;
+/

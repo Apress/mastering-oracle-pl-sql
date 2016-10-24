@@ -1,0 +1,58 @@
+create or replace view stats
+ as select ‘S:’ || a.name name, b.value
+ from v$statname a, v$mystat b
+ where a.statistic# = b.statistic#
+ union all
+ select ‘L:’ || name, gets
+ from v$latch
+ union all
+ select ‘E:Elapsed’, hsecs from v$timer;
+
+create or replace type stats_line as object
+ ( snapid number(10),
+ name varchar2(66),
+ value int );
+/
+
+create or replace type stats_array as
+ table of stats_line;
+/
+
+
+declare
+v_snap_id number := 0;
+s stats_array := stats_array();
+begin
+v_snapid := v_snapid + 1;
+for i in ( select * from stats) loop
+s.extend;
+s(s.count) := stats_line(v_snapid, i.name,i.value );
+end loop;
+end;
+
+create or replace
+ type run_stats_line as object (
+ tag varchar2(66),
+ run1 int,
+ run2 int,
+ diff2 int,
+ pct2 int,
+ run3 int,
+ diff3 int,
+ pct3 int,
+ run4 int,
+ diff4 int,
+ pct4 int,
+ run5 int,
+ diff5 int,
+ pct5 int,
+ run6 int,
+ diff6 int,
+ pct6 int);
+/
+
+
+create or replace type run_stats_output
+ as table of run_stats_line;
+/
+

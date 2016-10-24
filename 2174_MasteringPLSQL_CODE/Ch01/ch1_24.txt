@@ -1,0 +1,39 @@
+create or replace
+ procedure report_sal_adjustment3 is
+ type dept_sal_details is record (
+ avg_dept_sal emp.sal%type,
+ min_dept_sal emp.sal%type,
+ dname dept.dname%type );
+ type dept_sals is table of dept_sal_details
+ index by binary_integer;
+ v_dept_sal dept_sals;
+ cursor c_emp_list is
+ select empno, ename, deptno, sal, hiredate
+ from emp;
+ cursor c_dept_salaries is
+ select avg(sal) asal, min(sal) msal, dname, dept.deptno
+ from dept, emp
+ where emp.deptno = dept.deptno
+ group by dname, dept.deptno;
+begin
+ for i in c_dept_salaries loop
+ v_dept_sal(i.deptno).avg_dept_sal := i.asal;
+ v_dept_sal(i.deptno).min_dept_sal := i.msal;
+ v_dept_sal(i.deptno).dname := i.dname;
+ end loop;
+ for each_emp in c_emp_list loop
+ if abs(each_emp.sal - v_dept_sal(each_emp.deptno).avg_dept_sal ) /
+ v_dept_sal(each_emp.deptno).avg_dept_sal > 0.20 then
+ if v_dept_sal(each_emp.deptno).min_dept_sal = each_emp.sal then
+ insert into emp_sal_log
+ values ( each_emp.ename, each_emp.hiredate,
+ each_emp.sal, v_dept_sal(each_emp.deptno).dname, ‘Y’);
+ else
+ insert into emp_sal_log
+ values ( each_emp.ename, each_emp.hiredate, each_emp.sal,
+ v_dept_sal(each_emp.deptno).dname, ‘Y’);
+ end if;
+ end if;
+end loop;
+end;
+/

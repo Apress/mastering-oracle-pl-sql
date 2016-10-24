@@ -1,0 +1,21 @@
+create or replace
+ procedure P1 is
+ v_cnt number;
+ begin
+ select count(*)
+ into v_cnt
+ from emp
+ where empno > 0;
+ end;
+/
+
+select object_name, status
+ from user_objects
+ where object_name in ('P1','P2','P3','P4');
+
+exec p3
+
+select object_name, status
+ from user_objects
+ where object_name in ('P1','P2','P3','P4');
+

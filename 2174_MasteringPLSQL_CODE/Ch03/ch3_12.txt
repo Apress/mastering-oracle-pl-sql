@@ -1,0 +1,13 @@
+variable x refcursor
+declare
+ r emp%rowtype;
+ begin
+ :x := emp_list;
+ loop
+ fetch :x into r;
+ exit when :x%notfound;
+ dbms_output.put_line(r.empno||’,’||r.hiredate);
+ end loop;
+ close :x;
+end;
+/

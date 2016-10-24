@@ -1,0 +1,26 @@
+declare
+ x varchar2(32767);
+ begin
+ for i in 1 .. 300 loop
+ x := x || ' procedure X'||i||';';
+ end loop;
+ execute immediate
+ 'create or replace package MEMTEST is '||x||' end;';
+ x := replace(x,';',' is y number; begin y := 1; end;');
+ execute immediate
+ 'create or replace package body MEMTEST is '||x||' end;';
+ end;
+/
+alter system flush shared_pool;
+exec memtest.x1;
+select * from v$sgastat
+ where name like 'PL/SQL MPCODE';
+exec memtest.x2;
+select * from v$sgastat
+ where name like 'PL/SQL MPCODE';
+exec memtest.x10;
+select * from v$sgastat
+ where name like 'PL/SQL MPCODE';
+exec memtest.x100;
+select * from v$sgastat
+where name like 'PL/SQL MPCODE';

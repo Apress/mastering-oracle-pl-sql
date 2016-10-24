@@ -1,0 +1,16 @@
+update emp
+ set sal = sal * 1.1
+ where hiredate < to_date('08/SEP/1981','DD/MON/YYYY');
+
+select row_wait_obj#, row_wait_file#,
+ row_wait_block#, row_wait_row#
+ from v$session
+ where row_wait_obj# in (
+ select data_object_id
+ from user_objects
+ where object_name = 'EMP');
+
+select *
+ from emp
+ where rowid = dbms_rowid.rowid_create(1,49627,7,138,0);
+

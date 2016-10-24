@@ -1,0 +1,34 @@
+create or replace
+procedure MY_PROC(p_input varchar2) is
+v1 varchar2(30);
+v2 varchar2(30);
+v3 varchar2(30);
+v4 varchar2(30);
+begin
+  v1 := p_input;
+end;
+/
+create or replace
+package MY_PKG is
+  glob_var varchar2(40) := rpad('*',40);
+end;
+/
+
+exec MY_PROC(my_pkg.glob_var);
+
+
+create or replace
+procedure MY_PROC(p_input varchar2) is
+v1 my_pkg.glob_var%type;
+v2 my_pkg.glob_var%type;
+v3 my_pkg.glob_var%type;
+v4 my_pkg.glob_var%type;
+begin
+  null;
+end;
+/
+create or replace
+ package MY_PKG is
+ glob_var varchar2(60) := rpad(‘x’,60);
+ end;
+/

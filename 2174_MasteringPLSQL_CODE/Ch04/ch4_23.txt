@@ -1,0 +1,27 @@
+create table TEN_BYTE_COLUMN (
+ col varchar2(10));
+
+create or replace
+ procedure ADD_ROW(p_col TEN_BYTE_COLUMN.COL%TYPE) is
+ begin
+ insert into TEN_BYTE_COLUMN
+ values (p_col);
+ end;
+/
+
+create or replace
+ procedure ADD_NUM_ROW(p_col TEN_SIG_DIGITS.COL%TYPE) is
+ begin
+ insert into TEN_SIG_DIGITS
+ values (p_col);
+ end;
+/
+
+
+create or replace
+ procedure LOCAL_TYPE_VAR is
+ x ten_byte_column.col%type;
+ begin
+ x := ‘01234567890123456789’;
+ end;
+/

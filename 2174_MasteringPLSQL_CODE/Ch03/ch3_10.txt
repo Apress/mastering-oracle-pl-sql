@@ -1,0 +1,30 @@
+create or replace
+ procedure explicit is
+ cursor explicit_cur is
+ select x
+ from explicit_is_best
+ order by y desc;
+ dummy number;
+ begin
+ for i in 1 .. 500 loop
+ open explicit_cur;
+ fetch explicit_cur
+ into dummy;
+ close explicit_cur;
+ end loop;
+ end;
+/
+
+create or replace
+ procedure implicit is
+ dummy number;
+ begin
+ for i in 1 .. 500 loop
+ select x into dummy
+ from ( select x
+ from explicit_is_best
+ order by y desc )
+ where rownum = 1;
+ end loop;
+ end;
+/

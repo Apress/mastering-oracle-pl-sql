@@ -1,0 +1,65 @@
+rem REPTEST.SQL
+rem ——————
+rem Takes as input two parameters, the first being
+rem the number of employees, the second the number
+rem of departments. Employees are assigned at random
+rem to departments, and salaries are randomised between
+rem 7500 and 10000
+rem
+set termout off
+rem Number of employees will be passed as the first parameter,
+rem number of departments as the second. We want to assign these
+rem values to two SQL Plus substitution variables called NUM_EMPS
+rem and NUM_DEPTS respectively
+col x new_value num_emps
+col y new_value num_depts
+rem Select the values from DUAL to complete the assigment
+select &1 x, &2 y from dual;
+rem Now we erase the contents of the EMP table and DEPT table
+rem in preparation for population with sample data
+truncate table EMP reuse storage;
+truncate table DEPT reuse storage;
+rem Now we load up the EMP table just like we did in the
+rem previous example, using the SRC table to generate as
+rem many rows as we require
+insert into EMP
+select rownum,
+‘Name’||rownum,
+sysdate+rownum/100,
+dbms_random.value(7500,10000),
+dbms_random.value(1,&num_depts)
+from SRC
+where rownum <= &num_emps;
+rem We do a similar exercise with the DEPT table to load
+rem the required number of department rows
+insert into DEPT
+select rownum, ‘Dept’||rownum
+from sys.source$
+where rownum <= &num_depts;
+rem And for good measure, we will calculate optimizer
+rem statistics on the two tables, because no-one should
+rem be using the rule based optimizer anymore
+analyze table emp compute statistics;
+analyze table dept compute statistics;
+rem We truncate our results table in preparation for the test
+truncate table EMP_SAL_LOG;
+rem And now, here is the real testing portion of the script
+rem We will run the procedure 3 times, and report an average
+rem execution time across the 3 executions. To do this, we
+rem use the DBMS_UTILITY.GET_TIME function to give start and
+rem end timings for the test – the delta of these two times
+rem is the total time elapsed (in centiseconds). Dividing
+rem by 100 and then by 3, gives us the average execution
+rem time in seconds.
+set serverout on
+set termout on
+declare
+x number := dbms_utility.get_time;
+begin
+for i in 1 .. 3 loop
+report_sal_adjustment;
+end loop;
+dbms_output.put_line(‘Average run time: ‘||
+round((dbms_utility.get_time-x)/3/100,2));
+end;
+/

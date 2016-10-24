@@ -1,0 +1,29 @@
+create or replace
+ procedure LIMIT_TEST is
+ mem_used number;
+ t number;
+ type recs is
+ table of SRC%rowtype;
+ r recs;
+ cursor c1 is select * from SRC
+ begin
+ for i in 0 .. 7 loop
+ t := dbms_utility.get_time;
+ open c1;
+ loop
+ fetch c1
+ bulk collect into r
+ limit power(2,i*2);
+ exit when c1%notfound;
+ end loop;
+ close c1;
+ select value
+ into mem_used
+ from v$mystats
+ where name = ‘session pga memory max’;
+ dbms_output.put_line(‘Rows:’||power(2,i*2));
+ dbms_output.put_line(‘- Time: ‘||(dbms_utility.get_time-t));
+ dbms_output.put_line(‘- Max Mem: ‘||mem_used);
+ end loop;
+ end;
+/

@@ -1,0 +1,4 @@
+col value format 999,999,999
+select * from v$mystats
+ where name = ‘ session pga memory max’
+/

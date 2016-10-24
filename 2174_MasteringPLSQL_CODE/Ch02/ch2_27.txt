@@ -1,0 +1,18 @@
+create table LIST_OF_FILES (
+ fname varchar2(30),
+ fdir varchar2(30)) ;
+
+insert into LIST_OF_FILES
+ values ('demo.dat','/tmp');
+
+create or replace
+ trigger DEL_FILE
+ before delete on LIST_OF_FILES
+ for each row
+ declare
+ j number;
+ begin
+ dbms_job.submit(j,'utl_file.fremove('''||
+ :old.fdir||''','''||:old.fname||''');');
+ end;
+/

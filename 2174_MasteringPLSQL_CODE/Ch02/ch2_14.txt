@@ -1,0 +1,16 @@
+declare
+ d number;
+ s number;
+ begin
+ s := dbms_utility.get_time;
+ for i in 1 .. 50000 loop
+ d := use_g1;
+ end loop;
+ dbms_output.put_line((dbms_utility.get_time-s)/100||' seconds for usage');
+ s := dbms_utility.get_time;
+ for i in 1 .. 50000 loop
+ d := use_g2;
+ end loop;
+ dbms_output.put_line((dbms_utility.get_time-s)/100' seconds for usage in SQL');
+end;
+/

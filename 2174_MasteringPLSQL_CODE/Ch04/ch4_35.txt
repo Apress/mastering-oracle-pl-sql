@@ -1,0 +1,23 @@
+drop table EMP_AUDIT;
+create table EMP_AUDIT (
+ empno number(10),
+ viewed date );
+create or replace
+ function AUDIT_ROW(p_empno number) return number is
+ begin
+ insert into EMP_AUDIT
+ values (p_empno, sysdate);
+ return 0;
+ end;
+/
+
+create or replace
+ function AUDIT_ROW(p_empno number) return number is
+ pragma autonomous_transaction;
+ begin
+ insert into EMP_AUDIT
+ values (p_empno, sysdate);
+ commit;
+ return 0;
+ end;
+/

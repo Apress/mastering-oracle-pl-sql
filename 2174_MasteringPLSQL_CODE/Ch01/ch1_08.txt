@@ -1,0 +1,21 @@
+alter system set job_queue_processes = 20;
+create table CUSTLOG ( elapsed_centiseconds number);
+
+declare
+ j number;
+ job_string varchar2(1000) :=
+ ‘declare
+ s number := dbms_utility.get_time;
+ begin
+ for i in 1 .. 10000 loop
+ gen_customer;
+ end loop;
+ insert into custlog values (dbms_utility.get_time-s);
+ commit;
+ end;’;
+begin
+ for i in 1 .. 20 loop
+ dbms_job.submit(j,job_string);
+end loop;
+end;
+/

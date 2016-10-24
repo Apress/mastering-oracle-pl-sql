@@ -1,0 +1,9 @@
+PROCEDURE insert_blob_proc IS
+ Blob_loc BLOB;
+BEGIN
+ SELECT ad_photo INTO Blob_loc
+ FROM Print_media
+ WHERE product_id = 3106 AND ad_id=13001;
+ INSERT INTO Print_media VALUES (2056, 12001, Blob_loc);
+END;
+

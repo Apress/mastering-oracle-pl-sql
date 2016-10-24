@@ -1,0 +1,13 @@
+create or replace
+ package body PKG_SECURITY is
+ procedure set_values is
+ begin
+ dbms_session.set_context('glob','g_1',1);
+ dbms_session.set_context('glob','g_2',2);
+ dbms_session.set_context('glob','g_3',3);
+ dbms_session.set_context(‘glob’,’g_new_global’,3);
+ end;
+/
+select object_name, status
+from user_Objects
+where object_name in ('USE_G1','USE_G2');

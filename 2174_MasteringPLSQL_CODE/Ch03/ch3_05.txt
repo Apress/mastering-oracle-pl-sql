@@ -1,0 +1,16 @@
+delete from explicit_is_best
+ where x= 1;
+insert into explicit_is_best
+ values (1,’padding’);
+create or replace
+ procedure implicit is
+ dummy number;
+ begin
+ for i in 1 .. 1000 loop
+ select 1
+ into dummy
+ from explicit_is_best
+ where x = 2 and rownum = 1;
+ end loop;
+end;
+/

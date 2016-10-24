@@ -1,0 +1,51 @@
+create table BULK_BIND_TARGET (
+ x number,
+ y date,
+ z varchar2(50) );
+
+declare
+ type numlist is table of number;
+ type datelist is varray(50000) of date;
+ type charlist is table of varchar2(50)
+index by binary_integer;
+
+ n numlist := numlist();
+ d datelist := datelist();
+ c charlist;
+ begin
+ for i in 1 .. 50000 loop
+ n.extend;
+ n(i) := i;
+ d.extend;
+ d(i) := sysdate+i;
+ c(i) := rpad(i,50);
+ end loop;
+
+ for i in 1 .. 50000 loop
+ insert into bulk_bind_target values (n(i), d(i), c(i));
+ end loop;
+ end;
+/
+
+declare
+ type numlist is table of number;
+ type datelist is varray(50000) of date;
+ type charlist is table of varchar2(50)
+ index by binary_integer;
+
+ n numlist := numlist();
+ d datelist := datelist();
+ c charlist;
+ begin
+ for i in 1 .. 50000 loop
+ n.extend;
+ n(i) := i;
+ d.extend;
+ d(i) := sysdate+i;
+ c(i) := rpad(i,50);
+ end loop;
+
+ forall i in 1 .. 50000
+ insert into bulk_bind_target values (n(i), d(i), c(i));
+ end;
+/

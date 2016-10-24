@@ -1,0 +1,42 @@
+@$ORACLE_HOME\sqlplus\demo\demobld
+alter table dept add tot_sal number;
+update dept
+ set tot_sal = ( select sum(sal)
+ from emp where deptno = dept.deptno );
+create table EMP_AUDIT (
+ date_rec date,
+ empno number,
+ sal number(4));
+create table EMP_DELTAS
+ ( empno number, change_type varchar2(10));
+insert into emp_deltas
+ select empno, null from emp;
+create or replace
+ procedure UPDATE_EMP(p_empno number, p_sal number) is
+ begin
+ update DEPT
+ set TOT_SAL = TOT_SAL +
+ ( select p_sal-sal
+ from EMP
+ where empno = p_empno )
+ where deptno = ( select deptno
+ from EMP
+ where empno = p_empno);
+
+ update EMP
+ set sal = p_sal
+ where empno = p_empno;
+
+ update EMP_DELTAS
+ set change_type = ‘SAL’
+ where empno = p_empno;
+
+ insert into EMP_AUDIT
+ values (sysdate,p_empno,p_sal);
+
+ exception
+ when others then
+ rollback;
+ raise;
+ end;
+/

@@ -1,0 +1,41 @@
+create table x ( x number, y varchar2(30));
+insert into x
+ select rownum, 'xxxxx'||rownum
+ from SRC
+ where rownum < 10000;
+create or replace
+ package FBI is
+ function ix(p varchar2) return varchar2 deterministic;
+ end;
+/
+create or replace
+ package body FBI is
+ function ix(p varchar2) return varchar2
+ deterministic is
+ begin
+ return p;
+ end;
+ end;
+/
+create index x1 on x ( FBI.ix(y));
+analyze table x estimate statistics
+set autotrace on
+select *
+ from x
+ where FBI.ix(y) = 'xxxxx123';
+create or replace
+ package body p1 is
+ function ix(p varchar2) return varchar2
+ deterministic is
+ begin
+ return p||’abc’;
+ end;
+ end;
+/
+select *
+ from x
+ where p1.ix(y) = 'xxxxx123';
+select /*+ FULL(x) */ *
+ from x
+ where p1.ix(y) = 'xxxxx123';
+

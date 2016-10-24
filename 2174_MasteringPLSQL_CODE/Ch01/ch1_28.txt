@@ -1,0 +1,22 @@
+col dte new_value mdate
+select ‘23-JUN-03’ dte from dual;
+select
+ max(decode(dow,1,d,null)) Sun,
+ max(decode(dow,2,d,null)) Mon,
+ max(decode(dow,3,d,null)) Tue,
+ max(decode(dow,4,d,null)) Wed,
+ max(decode(dow,5,d,null)) Thu,
+ max(decode(dow,6,d,null)) Fri,
+ max(decode(dow,7,d,null)) Sat
+ from
+ ( select rownum d,
+ rownum-2+to_number(
+ to_char(trunc(
+ to_date(‘&mdate’),’MM’),’D’)) p,
+ to_char(trunc(to_date(‘&mdate’),’MM’)
+ -1+rownum,’D’) dow
+ from SRC
+ where rownum <= to_number(to_char(
+ last_day(to_date(‘&mdate’)),’DD’)))
+ group by trunc(p/7)
+/

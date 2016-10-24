@@ -1,0 +1,44 @@
+create table MANDATORY_COL (
+ x number not null );
+
+declare
+ type numlist is table of number
+ index by binary_integer;
+ n numlist;
+ begin
+ for i in 1 .. 50 loop
+ n(i) := i;
+ end loop;
+
+ n(37) := null; — will cause a problem
+
+ forall i in 1 .. 50
+ insert into MANDATORY_COL values (n(i));
+ end;
+/
+
+set serverout on
+declare
+ type numlist is table of number
+ index by binary_integer;
+ n numlist;
+ begin
+ for i in 1 .. 50 loop
+ n(i) := i;
+ end loop;
+
+ n(37) := null; — will cause a problem
+
+ forall i in 1 .. 50 save exceptions
+ insert into MANDATORY_COL values (n(i));
+
+ exception when others then
+ dbms_output.put_line(‘Errors:’||sql%bulk_exceptions.count);
+ for i in 1 .. sql%bulk_exceptions.count loop
+ dbms_output.put_line(‘index:’||sql%bulk_exceptions(i).error_index);
+ dbms_output.put_line(‘code:’||sql%bulk_exceptions(i).error_code);
+ dbms_output.put_line(‘message:’);
+ dbms_output.put_line(sqlerrm(sql%bulk_exceptions(i).error_code));
+ end loop;
+ end;
+/

@@ -1,0 +1,18 @@
+create or replace
+ procedure explicit2 is
+ cursor explicit_cur is
+ select 1
+ from one_row_tab;
+ dummy number;
+ begin
+ open explicit_cur;
+ for i in 1 .. 50000 loop
+ fetch explicit_cur
+ into dummy;
+ if explicit_cur%found then
+ dbms_output.put_line(‘I worked’);
+ end if;
+ end loop;
+ close explicit_cur;
+ end;
+/

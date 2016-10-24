@@ -1,0 +1,20 @@
+create table REDO_TEST
+ ( col char(100));
+insert into REDO_TEST
+ select 'x'
+ from all_Objects
+ where rownum < 100;
+select value
+ from v$mystats
+ where name = 'redo size';
+update redo_test
+ set col = 'y';
+select value
+ from v$mystats
+ where name = 'redo size';
+update redo_test
+ set col = 'y';
+
+select value
+ from v$mystats
+ where name = 'redo size';

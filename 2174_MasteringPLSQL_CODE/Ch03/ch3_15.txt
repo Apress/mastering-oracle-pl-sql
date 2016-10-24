@@ -1,0 +1,20 @@
+create or replace
+ function dept_emp_cust return sys_refcursor is
+ rc sys_refcursor;
+ begin
+ open rc for
+ select deptno, dname,
+ cursor(select empno, ename
+ from emp
+ where deptno = d.deptno) emps,
+ cursor(select custid, custname
+ from customers
+ where purchasing_dept = d.deptno) custs
+ from dept d;
+ return rc;
+ end;
+/
+
+variable x refcursor
+exec :x := dept_emp_cust;
+print x

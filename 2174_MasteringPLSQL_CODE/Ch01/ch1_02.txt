@@ -1,0 +1,31 @@
+#include <oci.h>
+#include <stdio.h>
+#include <sqlca.h>
+void Sample_Error()
+{
+EXEC SQL WHENEVER SQLERROR CONTINUE;
+printf(“%.*s\n”, sqlca.sqlerrm.sqlerrml, sqlca.sqlerrm.sqlerrmc);
+EXEC SQL ROLLBACK WORK RELEASE;
+exit(1);
+}
+void insertBLOB_proc()
+{
+OCIBlobLocator *Lob_loc;
+EXEC SQL WHENEVER SQLERROR DO Sample_Error();
+/* Initialize the BLOB Locator: */
+EXEC SQL ALLOCATE :Lob_loc;
+EXEC SQL SELECT ad_photo INTO :Lob_loc
+FROM Print_media WHERE product_id = 2268 AND ad_id = 21001;
+/* Insert into the row where product_id = 3106 and ad_id = 13001: */
+EXEC SQL INSERT INTO Print_media
+VALUES (3106, 13001, :Lob_loc);
+/* Release resources held by the locator: */
+EXEC SQL FREE :Lob_loc;
+}
+void main()
+{
+char *samp = “pm/pm”;
+EXEC SQL CONNECT :pm;
+insertBLOB_proc();
+EXEC SQL ROLLBACK WORK RELEASE;
+}

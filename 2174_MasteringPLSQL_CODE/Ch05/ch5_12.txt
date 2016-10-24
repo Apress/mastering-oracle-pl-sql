@@ -1,0 +1,53 @@
+create table REC_DML (
+ x number,
+ y char(100),
+ z number );
+insert into rec_dml
+ select rownum, rownum, rownum
+ from sys.source$
+ where rownum < 1000;
+declare 
+ redo_amount number;
+ p rec_dml%rowtype;
+ begin
+ select value
+ into redo_amount
+ from v$mystats
+ where name = 'redo size';
+ for i in ( select * from rec_dml) loop
+ update rec_dml
+ set z = z + 1
+ where x = i.x;
+ end loop;
+ select value-redo_amount
+ into redo_amount
+ from v$mystats
+ where name = 'redo size';
+ dbms_output.put_line('Redo generated: '||redo_amount);
+ end;
+/
+
+declare —new record based DML
+ redo_amount number;
+ p rec_dml%rowtype;
+ begin
+ select value
+ into redo_amount
+ from v$mystats
+ where name = 'redo size';
+ for i in ( select * from rec_dml) loop
+ p.x := i.x;
+ p.y := i.y;
+ p.z := i.z+1;
+ update rec_dml
+ set row = p
+ where x = i.x;
+ end loop;
+ select value-redo_amount
+ into redo_amount
+ from v$mystats
+ where name = 'redo size';
+ dbms_output.put_line('Redo generated: '||redo_amount);
+ end;
+/
+

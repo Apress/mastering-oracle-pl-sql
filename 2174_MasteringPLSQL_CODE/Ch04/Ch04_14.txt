@@ -1,0 +1,6 @@
+set autotrace traceonly statistics
+set arraysize 1
+set timing on
+select * from SRC;
+set arraysize 500
+select * from SRC;

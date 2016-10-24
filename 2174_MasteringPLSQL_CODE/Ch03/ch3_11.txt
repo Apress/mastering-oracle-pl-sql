@@ -1,0 +1,23 @@
+create or replace
+ function emp_list return sys_refcursor is
+ rc sys_refcursor;
+ begin
+ open rc for select * from emp;
+ return rc;
+ end;
+/
+
+create or replace
+ procedure list_emps is
+ e sys_refcursor;
+ r emp%rowtype;
+ begin
+ e := emp_list;
+ loop
+ fetch e into r;
+ exit when e%notfound;
+ dbms_output.put_line(r.empno||’,’||r.hiredate);
+ end loop;
+ close e;
+ end;
+/

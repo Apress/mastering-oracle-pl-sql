@@ -1,0 +1,43 @@
+create table ERRS
+ ( module varchar2(30),
+ errdate date,
+ errmsg varchar2(4000));
+create or replace
+ procedure err_logger(p_module varchar2,
+ p_msg varchar2) is
+ pragma autonomous_transaction;
+ begin
+ insert into errs
+ values (p_module,sysdate,substr(p_msg,1,4000));
+ commit;
+ end;
+/
+create or replace
+ procedure UPDATE_EMP(p_empno number, p_sal number) is
+ begin
+ update DEPT
+ set TOT_SAL = TOT_SAL +
+ ( select p_sal-sal
+ from EMP
+ where empno = p_empno )
+ where deptno = ( select deptno
+ from EMP
+ where empno = p_empno);
+
+ update EMP
+ set sal = p_sal
+ where empno = p_empno;
+
+ update EMP_DELTAS
+ set change_type = ‘SAL’
+ where empno = p_empno;
+
+ insert into EMP_AUDIT
+ values (sysdate,p_empno,p_sal);
+
+ exception
+ when others then
+ err_logger(‘UPDATE_EMP’,sqlerrm);
+ raise;
+ end;
+/

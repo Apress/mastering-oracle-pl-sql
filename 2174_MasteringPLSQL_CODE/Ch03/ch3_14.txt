@@ -1,0 +1,5 @@
+select deptno, dname,
+cursor(select empno, ename
+from emp
+where deptno = d.deptno)
+from dept d;

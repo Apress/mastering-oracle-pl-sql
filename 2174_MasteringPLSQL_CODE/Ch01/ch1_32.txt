@@ -1,0 +1,16 @@
+select s.name,
+ case class_type
+ when 1 then (
+ select fixed_price
+ from part_time_package
+ where id = s.class_id )
+ when 2 then (
+ select hrs * hrly_rate
+ from contract_package
+ where id = s.class_id )
+ when 3 then (
+ select annual_sal + bonus
+ from perm_package
+ where id = s.class_id )
+ end sal
+ from staff s;

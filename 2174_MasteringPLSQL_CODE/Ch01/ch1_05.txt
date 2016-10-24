@@ -1,0 +1,15 @@
+set timing on
+begin
+ gen_customer;
+ commit;
+end;
+/
+
+begin
+ for i in 1 .. 100000 loop
+ gen_customer;
+ end loop;
+ commit;
+end;
+/
+

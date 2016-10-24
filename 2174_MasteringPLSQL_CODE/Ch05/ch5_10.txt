@@ -1,0 +1,16 @@
+create table T ( c1, c2) as
+ select 1,2 from dual;
+create table T1 ( c2 number, c1 number );
+create or replace
+procedure COPY_ROW is
+ r T%ROWTYPE;
+ begin
+ select *
+ into r
+ from T
+ where rownum = 1;
+
+ insert into T1
+ values r;
+ end;
+/

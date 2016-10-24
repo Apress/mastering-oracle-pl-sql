@@ -1,0 +1,13 @@
+set arraysize 50
+set autotrace on statistics
+select empno, deptno
+ from emp
+/
+
+create table IX ( x number primary key )
+ organization index;
+analyze table IX estimate statistics;
+select empno, cursor(select x from ix)
+ from emp
+/
+

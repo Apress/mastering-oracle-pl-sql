@@ -1,0 +1,39 @@
+create or replace
+ function binary_and(x number, y number) return number is
+ max_bin number(22) := power(2,64);
+ l_x number := x;
+ l_y number := y;
+ result number := 0;
+ begin
+ for i in reverse 0 .. 64 loop
+ if l_x >= max_bin and l_y >= max_bin then
+ result := result + max_bin;
+ end if;
+ if l_x >= max_bin then
+ l_x := l_x - max_bin;
+ end if;
+ if l_y >= max_bin then
+ l_y := l_y - max_bin;
+ end if;
+ max_bin := max_bin/2;
+ end loop;
+ return result;
+end;
+/
+
+declare
+ x number;
+begin
+ for i in 1 .. 50000 loop
+ x:= binary_and(i,i+1);
+ end loop;
+end;
+/
+declare
+ x number;
+begin
+ for i in 1 .. 50000 loop
+ x:= bitand(i,i+1);
+ end loop;
+end;
+/

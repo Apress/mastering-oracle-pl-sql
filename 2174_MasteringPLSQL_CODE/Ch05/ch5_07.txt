@@ -1,0 +1,47 @@
+declare
+ type varchar2_tab is table of number
+ index by varchar2(100);
+ vc varchar2_tab;
+ type num_tab is table of number
+ index by binary_integer;
+ n num_tab;
+ t number;
+ begin
+ t := dbms_utility.get_time;
+ for i in 1 .. 100000 loop
+ n(i) := i;
+ end loop;
+ dbms_output.put_line('Index by Number : '||
+ (dbms_utility.get_time-t));
+ t := dbms_utility.get_time;
+ for i in 1 .. 100000 loop
+ vc(i) := i;
+ end loop;
+ dbms_output.put_line('Index by Varchar2: '||
+ (dbms_utility.get_time-t));
+ end;
+/
+declare
+ type varchar2_tab is table of number
+ index by varchar2(100);
+ vc varchar2_tab;
+ type num_tab is table of number
+ index by binary_integer;
+ n num_tab;
+ t number;
+ begin
+ t := dbms_utility.get_time;
+ for i in 1 .. 100000 loop
+ n(i*1000) := i;
+ end loop;
+ dbms_output.put_line('Index by Number : '||
+ (dbms_utility.get_time-t));
+ t := dbms_utility.get_time;
+ for i in 1 .. 100000 loop
+ vc(i*1000) := i;
+ end loop;
+ dbms_output.put_line('Index by Varchar2: '||
+ (dbms_utility.get_time-t));
+ end;
+/
+

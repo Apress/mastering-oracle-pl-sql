@@ -1,0 +1,5 @@
+select name, type,
+ referenced_name, referenced_type
+ from user_Dependencies
+ where name = 'EMP_MAINT'
+/

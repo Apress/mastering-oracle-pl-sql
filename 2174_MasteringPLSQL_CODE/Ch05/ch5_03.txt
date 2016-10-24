@@ -1,0 +1,24 @@
+grant dba to confused identified by password;
+conn CONFUSED/PASSWORD
+
+select count(*) from dba_users;
+create or replace
+ procedure GET_ROW is
+ x number;
+ begin
+ execute immediate '
+ select 1
+ from dba_users
+ where rownum = 1' into x;
+end;
+/
+create or replace
+ procedure GET_ROW authid current_user is
+ x number;
+ begin
+ execute immediate '
+ select 1
+ from dba_users
+ where rownum = 1' into x;
+ end;
+/

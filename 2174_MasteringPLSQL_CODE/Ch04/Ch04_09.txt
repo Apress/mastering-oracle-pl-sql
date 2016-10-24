@@ -1,0 +1,13 @@
+create or replace
+ procedure WITH_ROWTYPE is
+ r T%ROWTYPE;
+ begin
+ select *
+ into r
+ from T
+ where rownum = 1;
+
+ insert into T1
+ values r;
+ end;
+/

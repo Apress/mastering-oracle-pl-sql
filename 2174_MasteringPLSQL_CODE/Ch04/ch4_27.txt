@@ -1,0 +1,22 @@
+declare
+ x rec_list := rec_list();
+ t1 number;
+ t2 number;
+ begin
+ x.extend(50000);
+ for i in 1 .. 50000 loop
+ x(i) := rec(i,i,rpad(i,30));
+ end loop;
+ t1 := dbms_utility.get_time;
+ for i in 1 .. 500000 loop
+ simple_parm(i);
+ end loop;
+ t2 := dbms_utility.get_time;
+ dbms_output.put_line(‘Simple: ‘||(t2-t1));
+ for i in 1 .. 500000 loop
+ big_parm(x);
+ end loop;
+ t1 := dbms_utility.get_time;
+ dbms_output.put_line(‘Collection:’||(t1-t2));
+ end;
+/

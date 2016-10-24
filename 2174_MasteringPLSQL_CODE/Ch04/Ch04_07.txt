@@ -1,0 +1,14 @@
+create table T (
+ c1 number,
+ c2 number );
+insert into T values (1,2);
+create or replace
+ procedure WITH_ROWTYPE is
+ r T%ROWTYPE;
+ begin
+ select *
+ into r
+ from T
+ where rownum = 1;
+ end;
+/

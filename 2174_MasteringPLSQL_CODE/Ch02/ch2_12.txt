@@ -1,0 +1,11 @@
+create or replace
+ package globals is
+ g_1 number(5) := 1;
+ g_2 number(5) := 1;
+ g_3 number(5) := 1;
+ g_new_global number(5) := 1;
+ end;
+/
+select object_name, status
+ from user_Objects
+ where object_name in ('USE_G1','USE_G2');

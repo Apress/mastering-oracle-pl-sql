@@ -1,0 +1,10 @@
+create or replace
+ procedure UPDATE_EMP(p_empno number, p_decrease number) is
+ begin
+ update EMP
+ set SAL = SAL / p_decrease
+ where empno = p_empno;
+end;
+/
+exec UPDATE_EMP(7369,2);
+exec UPDATE_EMP(7369,0);

@@ -1,0 +1,3 @@
+select percentile_cont(0.5)
+ within group (order by sal desc ) median_sal
+ from emp;

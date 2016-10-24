@@ -1,0 +1,12 @@
+create or replace
+package globals is
+g_gender_m constant char(1) := 'M';
+g_gender_f constant char(1) := 'F';
+g_error_msg_misc constant varchar2(80)
+:= 'An unknown error has occurred';
+g_error_msg_gender constant varchar2(80)
+:= 'Gender must be '|| g_gender_m|| ' or '|| g_gender_f;
+…
+…
+end;
+

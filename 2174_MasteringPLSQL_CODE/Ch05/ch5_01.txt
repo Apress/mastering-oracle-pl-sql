@@ -1,0 +1,32 @@
+create table T (code number);
+create table T_AUDIT (
+ code number,
+ ins_date date );
+create or replace
+ trigger TRG
+ before insert on T
+ for each row
+ begin
+ insert into T_AUDIT
+ values (:new.code, sysdate);
+end;
+/
+alter session set sql_trace = true;
+set feedback off
+select * from v$mystats
+ where name like 'parse%';
+
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+
+select * from v$mystats
+ where name like 'parse%';
+

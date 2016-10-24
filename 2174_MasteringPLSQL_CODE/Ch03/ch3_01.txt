@@ -1,0 +1,28 @@
+create table one_row_tab ( x primary key )
+ organization index as select 1 from dual;
+create or replace
+ procedure implicit is
+ dummy number;
+ begin
+ for i in 1 .. 50000 loop
+ select 1
+ into dummy
+ from one_row_tab;
+ end loop;
+end;
+/
+create or replace
+ procedure explicit is
+ cursor explicit_cur is
+ select 1
+ from one_row_tab;
+ dummy number;
+ begin
+ for i in 1 .. 50000 loop
+ open explicit_cur;
+ fetch explicit_cur
+ into dummy;
+ close explicit_cur;
+ end loop;
+ end;
+/

@@ -1,0 +1,35 @@
+create or replace
+ context glob using pkg_security.set_values;
+create or replace
+ package PKG_SECURITY is
+ procedure set_values;
+ end;
+/
+create or replace
+ package body PKG_SECURITY is
+ procedure set_values is
+ begin
+ dbms_session.set_context('glob','g_1',1);
+ dbms_session.set_context('glob','g_2',2);
+ dbms_session.set_context('glob','g_3',3);
+ end;
+/
+
+create or replace
+ function use_g1 return number is
+ begin
+ return sys_context('glob','g_1');
+ end;
+/
+
+create or replace
+ function use_g2 return number is
+ x number;
+ begin
+ select sys_context('glob','g_3') into x
+ from dual
+ where sys_context(‘glob’,’g_2’) = sys_context(‘glob’,’g_2’);
+ return x;
+ end;
+/
+exec set_values

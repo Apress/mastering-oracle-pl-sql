@@ -1,0 +1,12 @@
+create or replace
+ procedure ADD_COLUMN(p_table varchar2,
+ p_column varchar2) is
+ v number;
+ j number;
+ begin
+ insert into LIST_OF_CHANGES
+ values (p_table, p_column, sysdate);
+ dbms_job.submit(j,
+ ‘run_ddl(‘’alter table ‘||p_table||’ add ‘||p_column||’’’);’);
+ end;
+/

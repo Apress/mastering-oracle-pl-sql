@@ -1,0 +1,22 @@
+create or replace
+ type num_list is table of number;
+/
+create or replace
+ procedure DO_WORK(x num_list) is
+ begin
+ for i in 1 .. x.count loop
+ null;
+ end loop;
+ end;
+/
+set timing on
+declare
+ v varchar2(32767) := 'num_list(';
+ begin
+ for i in 1 .. 5000 loop
+ v := v || case when i = 1 then to_char(i) else ','||i end;
+ end loop;
+ v := v || ')';
+ execute immediate 'begin do_work('||v||'); end;';
+ end;
+/

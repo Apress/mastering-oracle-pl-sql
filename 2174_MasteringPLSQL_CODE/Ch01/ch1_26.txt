@@ -1,0 +1,17 @@
+create or replace
+ procedure report_sal_adjustment4 is
+begin
+ insert into emp_sal_log
+ select e.empno, e.hiredate, e.sal, dept.dname,
+ case when sal > avg_sal then ‘Y’
+ else ‘N’
+ end case
+ from (
+ select empno, hiredate, sal, deptno,
+ avg(sal) over ( partition by deptno ) as avg_sal,
+ min(sal) over ( partition by deptno ) as min_sal
+ from emp ) e, dept
+ where e.deptno = dept.deptno
+ and abs(e.sal - e.avg_sal)/e.avg_sal > 0.20;
+ end;
+/

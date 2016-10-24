@@ -1,0 +1,44 @@
+create table EMP_SAL_LOG (
+ ENAME VARCHAR2(20),
+ HIREDATE DATE,
+ SAL NUMBER(7,2),
+ DNAME VARCHAR2(20),
+ MIN_SAL VARCHAR2(1) );
+
+
+create or replace
+ procedure report_sal_adjustment is
+ v_avg_dept_sal emp.sal%type;
+ v_min_dept_sal emp.sal%type;
+ v_dname dept.dname%type;
+ cursor c_emp_list is
+ select empno, ename, deptno, sal, hiredate
+ from emp;
+begin
+ for each_emp in c_emp_list loop
+ select avg(sal)
+ into v_avg_dept_sal
+ from emp
+ where deptno = each_emp.deptno;
+ if abs(each_emp.sal - v_avg_dept_sal ) / v_avg_dept_sal > 0.20 then
+ select dept.dname, min(emp.sal)
+ into v_dname, v_min_dept_sal
+ from dept, emp
+ where dept.deptno = each_emp.deptno
+ and emp.deptno = dept.deptno
+ group by dname;
+ if v_min_dept_sal = each_emp.sal then
+ insert into emp_sal_log
+ values ( each_emp.ename, each_emp.hiredate,
+ each_emp.sal, v_dname, ‘Y’);
+ else
+ insert into emp_sal_log
+ values ( each_emp.ename, each_emp.hiredate,
+ each_emp.sal, v_dname, ‘Y’);
+ end if;
+ end if;
+end loop;
+end;
+/
+
+exec report_sal_adjustment

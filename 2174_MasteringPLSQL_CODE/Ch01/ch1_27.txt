@@ -1,0 +1,22 @@
+create or replace view YEARLY_BONUS as
+select emp.empno, emp.ename, dept.dname, emp.bonus
+from EMP, DEPT
+where emp.hiredate < sysdate + 1
+and emp.deptno = dept.deptno;
+
+create or replace
+procedure XXX is
+begin
+for i in ( select empno from yearly_bonus ) loop
+update emp
+set bonus = bonus * 1.1
+where empno = i.empno;
+end;
+/
+
+
+update ( select emp.ename, dept.dname, emp.bonus
+from EMP, DEPT
+where emp.hiredate < sysdate + 1
+and emp.deptno = dept.deptno)
+set bonus = bonus * 1.1;

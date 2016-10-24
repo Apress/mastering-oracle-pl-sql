@@ -1,0 +1,20 @@
+function get_gender_name(p_id sex.id%type) return sex.name%type is
+v_name sex.name%type;
+begin
+select name
+into v_name
+from sex
+where id = p_id;
+return v_name;
+end;
+
+select id,
+ first_name||' '||last_name full_name,
+ get_gender_name(sexid) gender
+ from persons;
+
+select p.id,
+ p.first_name||' '||p.last_name full_name,
+ sex.name
+ from persons p, sex
+where sex.id = p.sexid;

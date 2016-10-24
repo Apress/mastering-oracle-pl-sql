@@ -1,0 +1,57 @@
+create table EMP2 as
+ select empno, ename, hiredate,sal, deptno
+ from emp
+ where rownum = 0;
+create or replace
+ package PKG is
+ type emp_list is
+ table of emp2%rowtype;
+
+ function CONSUMER return sys_refcursor;
+ function MANIPULATOR(src_rows sys_refcursor) return emp_list;
+ procedure PRODUCER(changed_rows emp_list);
+
+end;
+/
+create or replace
+ package body PKG is
+
+ function CONSUMER return sys_refcursor is
+ src_rows sys_refcursor;
+ begin
+ open src_rows for
+ select empno, ename, hiredate,sal, deptno
+ from emp;
+ return src_rows;
+ end;
+
+ function MANIPULATOR(src_rows sys_refcursor) return emp_list is
+ changed_rows emp_list;
+ begin
+ fetch src_rows
+ bulk collect into changed_rows;
+ close src_rows;
+ for i in 1 .. changed_rows.count loop
+ changed_rows(i).sal := changed_rows(i).sal+10;
+ changed_rows(i).hiredate := changed_rows(i).hiredate + 1;
+ end loop;
+ return changed_rows;
+ end;
+
+ procedure PRODUCER(changed_rows emp_list) is
+ begin
+ forall i in 1 .. changed_rows.count
+ insert into emp2 values changed_rows(i);
+ commit;
+ end;
+
+ end;
+/
+set timing on
+exec pkg.producer(pkg.manipulator(pkg.consumer));
+select count(*) from emp2;
+
+select * from v$mystats
+where name like '%pga%'
+/
+

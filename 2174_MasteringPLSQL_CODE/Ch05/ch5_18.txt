@@ -1,0 +1,44 @@
+create or replace
+ procedure DO_WORK(x number) is
+ y number;
+ begin
+ y := x;
+ end;
+/
+set timing on
+begin
+ for i in 1 .. 10000 loop
+ execute immediate 'begin do_work(:x); end;' using i;
+ end loop;
+ end;
+/
+
+begin
+ for i in 1 .. 10000 loop
+ execute immediate 'begin do_work('||i||'); end;';
+ end loop;
+ end;
+/
+
+create global temporary table parms
+ ( parm_val number )
+ on commit preserve rows;
+create or replace
+ procedure DO_WORK is
+ begin
+ for i in ( select * from parms ) loop
+   null;
+ end loop;
+end;
+/
+alter session set cursor_sharing = force;
+
+begin
+ for i in 1 .. 10000 loop
+ execute immediate 'insert into parms values ('||i||')';
+ end loop;
+ execute immediate 'begin do_work; end;';
+ execute immediate 'truncate table parms';
+end;
+/
+

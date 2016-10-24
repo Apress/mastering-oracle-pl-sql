@@ -1,0 +1,80 @@
+create table AUDIT_EMP (
+ empno number(10),
+ reason varchar2(30),
+ change_date date,
+ change_by varchar2(30));
+create or replace
+ trigger AUDIT_EMP_CHANGES
+ before insert or update or delete
+ on EMP
+ for each row
+ declare
+ v_change date := sysdate;
+ v_uid number := uid;
+ v_reason varchar2(30);
+ begin
+ if inserting then
+ v_reason := 'Addition';
+ elsif deleting then
+ v_reason := 'Deletion';
+ elsif updating then
+ v_reason := 'Pre-Modification';
+ end if;
+ insert into audit_emp values
+ ( :new.empno, v_reason, v_change, v_uid);
+ end;
+/
+alter session set sql_trace = true;
+delete from emp;
+
+
+create or replace
+ trigger AUDIT_EMP_CHANGES
+ before insert or update or delete
+ on EMP
+ for each row
+ declare
+ v_reason varchar2(30);
+ begin
+ if inserting then
+ v_reason := 'Addition';
+ elsif deleting then
+ v_reason := 'Deletion';
+ elsif updating then
+ v_reason := 'Pre-Modification';
+ end if;
+ insert into audit_emp values
+ ( :new.empno, v_reason, sysdate, uid);
+ end;
+/
+
+create or replace
+ package U is
+ id number := uid;
+ end;
+/
+
+create or replace
+ trigger AUDIT_EMP_TO_FILE
+ before insert or update or delete
+ on EMP
+ for each row
+ declare
+ f utl_file.file_type;
+ v_reason varchar2(30);
+ begin
+ f := utl_file.fopen('/tmp','audit.dat','A');
+ if inserting then
+ v_reason := 'Addition';
+ elsif deleting then
+ v_reason := 'Deletion';
+elsif updating then
+ v_reason := 'Pre-Modification';
+ end if;
+ utl_file.put_line(f,'EMPNO '||:new.empno);
+ utl_file.put_line(f,'REASON '||v_reason);
+ utl_file.put_line(f,'DATE '||sysdate);
+ utl_file.put_line(f,'UID '||u.id);
+ utl_file.fclose(f);
+end;
+/

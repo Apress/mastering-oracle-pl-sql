@@ -1,0 +1,78 @@
+begin
+ for i in 10 .. 20 loop
+ execute immediate
+ 'grant connect, resource to inv'||i||
+ ' identified by xxx';
+ execute immediate
+ 'create table inv'||i||'.lookup '||
+ '( uno number primary key, '||
+ ' data varchar2(20)) '||
+ 'organization index';
+ execute immediate
+ 'insert into inv'||i||'.lookup '||
+ 'values ('||i||',''data'||i||''')';
+ execute immediate
+ 'analyze table inv'||i||'.lookup estimate statistics';
+ end loop;
+ end;
+/
+select owner, table_name
+ from dba_tables
+ where owner like 'INV__';
+
+grant connect, resource to definer identified by xxx;
+create table definer.lookup
+ ( uno number primary key,
+ data varchar2(20))
+ organization index;
+insert into definer.lookup
+ select rownum+9, 'data'||rownum
+ from all_objects
+ where rownum <= 11;
+create or replace
+ procedure definer.get(p_uno number) is
+ d varchar2(20);
+ begin
+ select data
+ into d
+ from lookup
+ where uno = p_uno;
+ end;
+/
+
+create or replace
+ procedure definer.invoker_proc authid current_user is
+ d varchar2(20);
+ begin
+ select data
+ into d
+ from lookup;
+end;
+/
+
+begin
+ for i in 1 .. 100000 loop
+ definer.invoker_proc; — invokers right access to 1 row table
+ end loop;
+ end;
+/
+begin
+ for i in 1 .. 100000 loop
+ definer.get(10); — definers rights to 1 row from 20 rows table
+ end loop;
+end;
+/
+
+
+select sql_text, executions
+ from v$sql
+ where sql_text like '%lookup%';
+
+
+select * from v$sql_shared_cursor
+ where KGLHDPAR =
+ ( select address from v$sql
+ where sql_text like 'SELECT data%'
+ and rownum = 1 )
+/
+

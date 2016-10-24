@@ -1,0 +1,17 @@
+create or replace
+ procedure PROCESS_EMP is
+ cursor C is
+ select empno, sal, comm
+ from emp;
+ v_bonus number := 10000;
+ begin
+ for i in c loop
+ v_bonus := v_bonus + i.comm / i.sal;
+ end loop;
+ exception
+ when zero_divide then
+ if C%ISOPEN then
+ close C;
+ end if;
+ end;
+/

@@ -1,0 +1,36 @@
+@$ORACLE_HOME/sqlplus/demo/demobld.sql
+create table STAFF (
+ staffno number,
+ name varchar2(30),
+ class_type number,
+ class_id number);
+
+reate table part_time_package (
+ id number,
+ fixed_price number );
+
+create table contract_package (
+ id number,
+ hrly_rate number,
+ hrs number );
+
+create table perm_package (
+ id number,
+ annual_sal number,
+ bonus number );
+
+insert into part_time_package
+ select rownum, rownum*130
+ from SRC where rownum < 6;
+
+insert into contract_package
+ select rownum, rownum*10, rownum*30
+ from SRC where rownum < 6;
+
+insert into perm_package
+ select rownum, rownum*10000, rownum*500
+ from SRC where rownum < 6;
+ rows created.
+
+insert into staff
+ select empno, ename, mod(rownum,3)+1, mod(rownum,5)+1 from emp;

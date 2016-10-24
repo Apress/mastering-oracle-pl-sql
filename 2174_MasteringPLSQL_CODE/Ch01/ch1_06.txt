@@ -1,0 +1,15 @@
+alter table CUSTOMERS modify PIN_NUMBER number(12);
+create sequence cust_seq cache 1000
+start with 100000;
+
+create or replace
+procedure gen_customer is
+ v_new_cid customers.pin_number%type;
+begin
+ insert into customers
+ values (cust_seq.nextval*100000+
+ round(dbms_random.value(100000,999999)));
+end;
+/
+
+

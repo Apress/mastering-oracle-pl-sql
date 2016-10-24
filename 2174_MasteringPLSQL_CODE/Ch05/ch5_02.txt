@@ -1,0 +1,29 @@
+create or replace
+ procedure T_AUDIT_PROC(p_code number) is
+ begin
+ insert into T_AUDIT
+ values (p_code, sysdate);
+ end;
+/
+create or replace
+ trigger TRG
+ before insert on T
+ for each row
+ call t_audit_proc(:new.code)
+/
+select * from v$mystats
+where name like 'parse%';
+set feedback off
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+insert into T values (1);
+select * from v$mystats
+where name like 'parse%';
+alter session set sql_trace = false;

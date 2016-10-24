@@ -1,0 +1,7 @@
+begin
+ for i in power(2,31) .. power(2,31)+10 loop
+ null;
+ end loop;
+ end;
+/
+

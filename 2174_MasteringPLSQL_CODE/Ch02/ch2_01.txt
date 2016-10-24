@@ -1,0 +1,23 @@
+create or replace
+package emp_maint is
+procedure hire_emp(p_empno number, p_name varchar2);
+procedure fire_emp(p_empno);
+procedure raise_salary(p_empno number, p_salary number);
+end;
+/
+create or replace
+package body emp_maint is
+procedure hire_emp(p_empno number, p_name varchar2) is
+begin
+insert into emp (empno, name) values (p_empno, p_name);
+end;
+procedure fire_emp(p_empno) is
+begin
+delete from emp where empno = p_empno;
+end;
+procedure raise_salary(p_empno number, p_salary number) is
+begin
+update emp set sal = p_salary where empno = p_empno;
+end;
+end;
+/

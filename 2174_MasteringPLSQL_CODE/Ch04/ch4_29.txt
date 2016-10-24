@@ -1,0 +1,37 @@
+create or replace
+ procedure SIMPLE_PARM(p in out number) is
+ begin
+ null;
+ end;
+/
+create or replace
+ procedure BIG_PARM(p in out Rec_list) is
+ begin
+ null;
+ end;
+/
+
+declare
+ x rec_list := rec_list();
+ s number := 1;
+ t1 number;
+ t2 number;
+ begin
+ for i in 1 .. 50000 loop
+ x.extend;
+ x(i) := rec(i,i,rpad(i,30));
+ end loop;
+ t1 := dbms_utility.get_time;
+ for i in 1 .. 50 loop
+ simple_parm(s);
+ end loop;
+ t2 := dbms_utility.get_time;
+ dbms_output.put_line(‘Simple: ‘||(t2-t1));
+ for i in 1 .. 50 loop
+ big_parm(x);
+ end loop;
+ t1 := dbms_utility.get_time;
+ dbms_output.put_line(‘Collection:’||(t1-t2));
+ end;
+/
+

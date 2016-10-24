@@ -1,0 +1,10 @@
+begin
+ DBMS_FGA.ADD_POLICY
+ (
+   object_schema => user,
+   object_name => 'EMP',
+   policy_name => 'AUDIT_EMP_RECORDS',
+   audit_column => 'salary'
+ );
+end;
+/

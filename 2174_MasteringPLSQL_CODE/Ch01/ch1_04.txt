@@ -1,0 +1,17 @@
+create or replace
+procedure gen_customer is
+ v_new_cid customers.pin_number%type;
+begin
+ loop
+  begin
+   v_new_cid := round(dbms_random.value(1000000,9999999));
+   insert into customers
+   values (v_new_cid);
+   exit;
+  exception when dup_val_on_index then
+   null;
+  end;
+ end loop;
+end;
+/
+

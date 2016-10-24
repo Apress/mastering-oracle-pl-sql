@@ -1,0 +1,29 @@
+create or replace
+ procedure ARRAY_PROCESS is
+ s integer := dbms_sql.open_cursor;
+ n1 dbms_sql.number_table;
+ d number;
+ c number;
+ BEGIN
+ dbms_sql.parse(s,’select * from SRC’,
+ DBMS_SQL.native);
+ dbms_sql.define_array(s,1,n1,500,1);
+ d := dbms_sql.execute(s);
+ loop
+ c := DBMS_SQL.FETCH_ROWS(s);
+ DBMS_SQL.COLUMN_VALUE(s, 1, n1);
+ exit when c < 500;
+ end loop;
+
+ DBMS_SQL.CLOSE_CURSOR(s);
+ END;
+/
+
+create or replace
+ procedure SINGLE_ROW_PROCESS is
+ begin
+ for i in ( select * from SRC ) loop
+ null;
+ end loop;
+end;
+/

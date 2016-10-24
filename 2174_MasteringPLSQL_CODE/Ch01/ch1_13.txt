@@ -1,0 +1,19 @@
+create or replace
+procedure binding is
+ c number;
+ p number;
+ x number;
+ x1 number;
+ begin
+ c := dbms_sql.open_cursor;
+ dbms_sql.parse(c,
+ ‘select pid from people ‘||
+ ‘where pid = :b1’, dbms_sql.native);
+ for i in 1 .. 10000 loop
+ dbms_sql.bind_variable(c,’:b1’,i);
+ x := dbms_sql.execute(c);
+ x1 := dbms_sql.fetch_rows(c);
+ end loop;
+ dbms_sql.close_cursor(c);
+end;
+/

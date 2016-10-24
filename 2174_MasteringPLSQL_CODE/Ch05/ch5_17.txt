@@ -1,0 +1,86 @@
+create or replace
+ function do_something(p varchar2) return varchar2 is
+ begin
+ counter.inc;
+
+ return p;
+ end;
+/
+
+exec counter.reset;
+create table big_tab
+as select owner, name, type, line
+from dba_source;
+analyze table big_tab estimate statistics;
+select name, line, do_something(owner)
+from big_tab;
+exec counter.show;
+
+
+exec counter.reset;
+select name, line, do_something(owner)
+from big_tab
+where do_something(owner) is not null
+order by do_something(owner) desc
+/
+exec counter.show;
+
+exec counter.reset;
+select name, line, function_result
+from big_tab a,
+ ( select distinct owner, do_something(owner) function_result
+ from big_tab ) f
+ where a.owner = f.owner
+/
+exec counter.show;
+
+exec counter.reset;
+select name, line, function_result
+ from big_tab a,
+ ( select owner, do_something(owner) function_result
+ from ( select distinct owner
+ from big_tab ) ) f
+ where a.owner = f.owner
+/
+exec counter.show;
+
+exec counter.reset;
+select name, line, function_result
+ from big_tab a,
+ ( select owner, rownum, do_something(owner) function_result
+ from ( select distinct owner
+ from big_tab ) ) f
+ where a.owner = f.owner
+/
+exec counter.show;
+
+create or replace
+ function do_something(p_owner varchar2)
+ return varchar2 deterministic is
+ begin
+ counter.inc;
+ return p_owner;
+ end;
+/
+create index big_ix on
+big_tab ( do_something(owner));
+analyze index big_ix estimate statistics;
+
+exec counter.reset;
+select name, line, do_something(owner)
+from big_tab;
+exec counter.show;
+
+
+exec counter.reset;
+select name, line, do_something(owner)
+from big_tab
+where do_something(owner) is not null;
+exec counter.show;
+
+exec counter.reset;
+select /*+ INDEX(big_tab big_ix) */ name,
+ line, do_something(owner)
+ from big_tab
+ where do_something(owner) is not null;
+exec counter.show;

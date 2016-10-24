@@ -1,0 +1,5 @@
+select object_name
+ from dba_objects
+ where owner = 'SYS'
+ and object_type = 'PACKAGE';
+

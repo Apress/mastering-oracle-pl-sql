@@ -1,0 +1,36 @@
+create or replace
+ procedure P1 is
+ v_cnt number;
+ begin
+ select count(*)
+ into v_cnt
+ from emp;
+ end;
+/
+create or replace
+ procedure P2 is
+ begin
+ P1;
+ end;
+/
+create or replace
+ procedure P3 is
+ begin
+ P2;
+ end;
+/
+create or replace
+ procedure P4 is
+ begin
+ P3;
+ end;
+/
+
+select name, type,
+referenced_name, referenced_type
+ from user_Dependencies
+/
+
+select object_name, status
+ from user_objects
+ where object_name in ('P1','P2','P3','P4');

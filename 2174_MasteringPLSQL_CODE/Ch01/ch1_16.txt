@@ -1,0 +1,14 @@
+create or replace
+procedure UPDATE_EMP(p_empno number, p_decrease number,
+p_success out boolean) is
+ begin
+ if p_decrease = 0 then
+ p_success := false;
+ else
+ update EMP
+ set SAL = SAL / p_decrease
+ where empno = p_empno;
+ p_success := true;
+ end if;
+end;
+/

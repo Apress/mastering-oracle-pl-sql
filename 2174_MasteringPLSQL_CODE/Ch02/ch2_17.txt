@@ -1,0 +1,23 @@
+create or replace
+ package body new_globals is
+
+ type num_tab is table of number
+ index by varchar2(30);
+
+ n num_tab;
+
+ function g(gname in varchar2) return number is
+ begin
+ return n(gname);
+ end;
+
+ begin
+ n('g_1') := 1;
+ n('g_2') := 1;
+ n('g_3') := 1;
+ n(‘g_new_global’) := 1;
+ end;
+/
+select object_name, status
+ from user_Objects
+ where object_name in ('USE_G1','USE_G2');

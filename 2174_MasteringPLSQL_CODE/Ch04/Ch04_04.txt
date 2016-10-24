@@ -1,0 +1,26 @@
+reate or replace
+ procedure data_type_test is
+ x date;
+ y varchar2(12) := ‘01-MAR-03’;
+ t number := dbms_utility.get_time;
+ begin
+ for i in 1 .. 1000000 loop
+ x := y; — implicit char to date
+ end loop;
+ dbms_output.put_line((dbms_utility.get_time-t)||’cs’);
+ end;
+/
+
+
+create or replace
+ procedure data_type_test is
+ x date;
+ y x%type := to_date(‘01-MAR-03’);
+ t number := dbms_utility.get_time;
+ begin
+ for i in 1 .. 1000000 loop
+ x := y;
+ end loop;
+ dbms_output.put_line((dbms_utility.get_time-t)||’cs’);
+ end;
+/

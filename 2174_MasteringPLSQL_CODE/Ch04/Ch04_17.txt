@@ -1,0 +1,51 @@
+declare
+ x number;
+ begin
+ select object_id
+ into x
+ from all_objects
+ where rownum <= 1;
+ end;
+/
+
+declare
+ type numlist is table of number;
+ x numlist;
+ begin
+ select object_id
+ bulk collect into x
+ from all_objects
+ where rownum <= 500;
+end;
+/
+
+create or replace
+directory REPORT_DIR as ‘C:\TEMP’;
+
+
+create or replace
+ procedure report_sal_adjustment4 is
+ f utl_file.file_type;
+ begin
+ f := utl_file.fopen(‘REPORT_DIR’,’report.dat’,’W’);
+ for i in (
+ select e.empno, e.hiredate, e.sal, dept.dname,
+ case when sal > avg_sal then ‘Y’
+ else ‘N’
+ end status
+ from (
+ select empno, hiredate, sal, deptno,
+ avg(sal) over ( partition by deptno ) as avg_sal,
+ min(sal) over ( partition by deptno ) as min_sal
+ from emp ) e, dept
+ where e.deptno = dept.deptno
+ and abs(e.sal - e.avg_sal)/e.avg_sal > 0.10 ) loop
+ utl_file.put_line(f,i.empno||
+ i.hiredate||
+ i.sal||
+ i.dname||
+ i.status);
+ end loop;
+ utl_file.fclose(f);
+ end;
+/

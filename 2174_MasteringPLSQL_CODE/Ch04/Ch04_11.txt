@@ -1,0 +1,22 @@
+create or replace type STOLEN_ITEMS as object (
+ firstname varchar2(30),
+ surname varchar2(30),
+ date_of_birth date,
+ incident_date date,
+ item_count number(4),
+ items_retrieved varchar2(1)
+)
+/
+create table CRIMES (
+ person_id number(10),
+ crime_details stolen_items );
+
+set long 50000
+select text
+ from dba_views
+ where view_name = ‘DBA_TAB_COLUMNS’
+/
+select column_name, hidden_column, data_type
+ from DBA_TAB_COLS
+ where table_name = ‘CRIMES’
+/

@@ -1,0 +1,70 @@
+create or replace
+ package pkg is
+ procedure rec_of_array_test;
+ procedure array_of_rec_test;
+ end;
+/
+create or replace
+ package body pkg is
+ type srec is record (a number, b number, c number, d number);
+ type srec_list is table of srec;
+
+ type num_list is table of number;
+ type array_rec is record (a num_list, b num_list,
+ c num_list, d num_list );
+ procedure rec_of_array_test is
+ s number := dbms_utility.get_time;
+ e number;
+ v1 srec_list;
+ q number;
+ begin
+ v1 := srec_list();
+ v1.extend(500000);
+ for i in 1 .. 500000 loop
+ v1(i).a := i;
+ v1(i).b := i;
+ v1(i).c := i;
+ v1(i).d := i;
+ end loop;
+ e := dbms_utility.get_time;
+ dbms_output.put_line('Populate: '||(e-s));
+ for i in 1 .. 250000 loop
+ q := v1(i*2-1).a;
+ q := v1(i*2).b;
+ q := v1(500000-i).c;
+ q := v1(500000-2*i+1).d;
+ end loop;
+ s := dbms_utility.get_time;
+ dbms_output.put_line('Retrieve From: '||(s-e));
+ end;
+
+ procedure array_of_rec_test is
+ s number := dbms_utility.get_time;
+ e number;
+ v1 array_rec;
+ q number;
+ begin
+ v1.a := num_list(); v1.a.extend(500000);
+ v1.b := num_list(); v1.b.extend(500000);
+ v1.c := num_list(); v1.c.extend(500000);
+ v1.d := num_list(); v1.d.extend(500000);
+ for i in 1 .. 500000 loop
+ v1.a(i) := i;
+ v1.b(i) := i;
+ v1.c(i) := i;
+ v1.d(i) := i;
+ end loop;
+ e := dbms_utility.get_time;
+ dbms_output.put_line('Populate: '||(e-s));
+ for i in 1 .. 250000 loop
+ q := v1.a(i*2-1);
+ q := v1.b(i*2);
+ q := v1.c(500000-i);
+ q := v1.d(500000-2*i+1);
+ end loop;
+ s := dbms_utility.get_time;
+ dbms_output.put_line('Retrieve From: '||(s-e));
+ end;
+
+ end;
+/

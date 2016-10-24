@@ -1,0 +1,25 @@
+create or replace
+ type rec is object
+ ( a number,
+ b number,
+ c varchar2(30));
+/
+
+create or replace
+ type rec_list is
+ table of rec;
+/
+create or replace
+ procedure SIMPLE_PARM(p number) is
+ x number;
+ begin
+ null;
+ end;
+/
+create or replace
+ procedure BIG_PARM(p Rec_list) is
+ x number;
+ begin
+ null;
+ end;
+/

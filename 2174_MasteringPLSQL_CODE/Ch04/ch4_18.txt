@@ -1,0 +1,34 @@
+create or replace
+ procedure report_sal_adjustment4_bulk is
+ f utl_file.file_type;
+ cursor c_template is
+ select e.empno, e.hiredate, e.sal, dept.dname,
+ case when sal > avg_sal then ‘Y’
+ else ‘N’
+ end status
+ from (
+ select empno, hiredate, sal, deptno,
+ avg(sal) over ( partition by deptno ) as avg_sal,
+ min(sal) over ( partition by deptno ) as min_sal
+ from emp ) e, dept
+ where e.deptno = dept.deptno
+ and abs(e.sal - e.avg_sal)/e.avg_sal > 0.10;
+ type resultset is
+ table of c_template%rowtype;
+ r resultset;
+ begin
+ f := utl_file.fopen(‘REPORT_DIR’,’report.dat’,’W’);
+ open c_template;
+ fetch c_template
+ bulk collect into r;
+ close c_template;
+ for i in 1 .. r.count loop
+ utl_file.put_line(f,r(i).empno||
+ r(i).hiredate||
+ r(i).sal||
+ r(i).dname||
+ r(i).status);
+ end loop;
+ utl_file.fclose(f);
+ end;
+/

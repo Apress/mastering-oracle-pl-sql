@@ -1,0 +1,58 @@
+create or replace package PKG1 is
+ procedure P1; end;
+/
+create or replace package body PKG1 is
+ procedure P1 is
+ v_cnt number;
+ begin
+ select count(*)
+ into v_cnt
+ from emp;
+ end;
+ end;
+/
+create or replace package PKG2 is
+procedure P2; end;
+/
+create or replace package body PKG2 is
+ procedure P2 is
+ begin
+ PKG1.P1;
+ end;
+ end;
+/
+create or replace package PKG3 is
+ procedure P3; end;
+/
+create or replace package body PKG3 is
+ procedure P3 is
+ begin
+ PKG2.P2;
+ end;
+end;
+/
+create or replace package PKG4 is
+ procedure P4; end;
+/
+create or replace package body PKG4 is
+ procedure P4 is
+ begin
+ PKG3.P3;
+ end;
+ end;
+/
+create or replace package body PKG1 is
+ procedure P1 is
+ v_cnt number;
+ begin
+ select count(*)
+ into v_cnt
+ from emp
+ where empno > 0;
+ end;
+ end;
+/
+
+select object_name, object_type, status
+ from user_objects
+ where object_name in ('PKG1','PKG2','PKG3','PKG4');

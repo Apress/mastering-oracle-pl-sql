@@ -1,0 +1,27 @@
+@$ORACLE_HOME/sqlplus/demo/demobld.sql
+
+create or replace
+ procedure WITHOUT_TYPE is
+ v_salary number(7,2);
+ begin
+ select max(sal)
+ into v_salary
+ from emp;
+end;
+/
+create or replace
+ procedure WITH_TYPE is
+ v_salary emp.sal%type;
+ begin
+ select max(sal)
+ into v_salary
+ from emp;
+ end;
+/
+
+alter table EMP modify sal number(10,2);
+update EMP set sal = 1,000,000
+ where EMPNO = 7369;
+
+exec WITHOUT_TYPE;
+exec WITH_TYPE;

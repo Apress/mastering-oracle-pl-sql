@@ -1,0 +1,15 @@
+select dbms_metadata.get_ddl('TABLE','EMP','SCOTT')
+ from dual;
+
+
+begin
+DBMS_METADATA.SET_TRANSFORM_PARAM(
+DBMS_METADATA.SESSION_TRANSFORM,
+'STORAGE',
+false);
+end;
+/
+
+select dbms_metadata.get_ddl('USER','SCOTT')
+ from dual;
+

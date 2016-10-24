@@ -1,0 +1,25 @@
+create or replace
+ package PKG is
+ procedure ADD_ROW(p_col TEN_BYTE_COLUMN.COL%TYPE);
+ procedure ADD_NUM_ROW(p_col TEN_SIG_DIGITS.COL%TYPE);
+ end;
+/
+
+create or replace
+ package body PKG is
+
+ procedure ADD_ROW(p_col TEN_BYTE_COLUMN.COL%TYPE) is
+ begin
+ insert into TEN_BYTE_COLUMN
+ values (p_col);
+ end;
+
+ procedure ADD_NUM_ROW(p_col TEN_SIG_DIGITS.COL%TYPE) is
+ begin
+ insert into TEN_SIG_DIGITS
+ values (p_col);
+ end;
+
+ end;
+/
+

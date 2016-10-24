@@ -1,0 +1,58 @@
+create or replace
+ package new_globals is
+ function g(gname in varchar2) return number;
+ end;
+/
+create or replace
+ package body new_globals is
+
+ type num_tab is table of number
+ index by varchar2(30);
+
+ n num_tab;
+
+ function g(gname in varchar2) return number is
+ begin
+ return n(gname);
+ end;
+
+ begin
+ n('g_1') := 1;
+ n('g_2') := 1;
+ n('g_3') := 1;
+ end;
+/
+
+create or replace
+ function use_g1 return number is
+ begin
+ return new_globals.g('g_1');
+ end;
+/
+create or replace
+ function use_g2 return number is
+ x number;
+ begin
+ select new_globals.g('g_3') into x
+ from dual
+ where new_globals.g('g_2') = new_globals.g('g_2');
+ return x;
+ end;
+/
+
+declare
+ d number;
+ s number;
+ begin
+ s := dbms_utility.get_time;
+ for i in 1 .. 1000000 loop
+ d := use_g1;
+ end loop;
+ dbms_output.put_line((dbms_utility.get_time-s)/100||' seconds for usage');
+ s := dbms_utility.get_time;
+ for i in 1 .. 50000 loop
+ d := use_g2;
+ end loop;
+ dbms_output.put_line((dbms_utility.get_time-s)/100' seconds for usage in SQL');
+ end;
+/

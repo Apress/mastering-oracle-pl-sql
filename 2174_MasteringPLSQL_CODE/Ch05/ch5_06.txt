@@ -1,0 +1,57 @@
+create or replace
+ type emp2rec is object (
+ empno number(10),
+ ename varchar2(20),
+ hiredate date,
+ sal number(10,2),
+ deptno number(6) );
+/
+create or replace
+ type emp2list as table of emp2rec;
+/
+create or replace
+ package PKG2 is
+ function CONSUMER return sys_refcursor;
+ function MANIPULATOR(src_rows sys_refcursor) return emp2list pipelined;
+ procedure PRODUCER;
+
+end;
+/
+create or replace
+ package body PKG2 is
+
+ function CONSUMER return sys_refcursor is
+ src_rows sys_refcursor;
+ begin
+ open src_rows for
+ select empno, ename, hiredate,sal, deptno
+ from emp;
+ return src_rows;
+ end;
+
+ function MANIPULATOR(src_rows sys_refcursor)
+ return emp2list pipelined is
+ r emp2rec;
+ e emp2%rowtype;
+ begin
+ loop
+ fetch src_rows into e;
+ exit when src_rows%notfound;
+ e.sal := e.sal+10;
+ e.hiredate := e.hiredate + 1;
+ pipe row (emp2rec(e.empno,e.ename,e.hiredate,e.sal,e.deptno ));
+ end loop;
+ close src_rows;
+ return;
+ end;
+
+procedure PRODUCER is
+ rc sys_refcursor := consumer;
+ begin
+ insert into emp2
+ select * from table(cast(manipulator(rc) as emp2list ));
+ end;
+
+end;
+/
+

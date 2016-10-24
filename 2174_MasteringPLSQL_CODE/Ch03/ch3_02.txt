@@ -1,0 +1,15 @@
+create or replace
+ procedure explicit2 is
+ cursor explicit_cur is
+ select 1
+ from one_row_tab;
+ dummy number;
+ begin
+ open explicit_cur; — placed before loop
+ for i in 1 .. 50000 loop
+ fetch explicit_cur
+ into dummy;
+ end loop;
+ close explicit_cur; — placed after loop
+ end;
+/

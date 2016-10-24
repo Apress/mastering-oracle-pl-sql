@@ -1,0 +1,25 @@
+create table PASSWORD_AUDIT (
+ empno number,
+ date_change date );
+create or replace
+ procedure admin.reset_password(p_empno varchar2) is
+ v_username varchar2(30);
+ v_job number;
+ begin
+ select ename
+ into v_username
+ from emp
+ where empno = p_empno
+ and mgr = ( select empno from emp where ename = user );
+ insert into password_audit values (
+ p_empno, user, sysdate);
+ dbms_job.submit(v_job,
+ 'begin execute immediate ' ||
+ '''alter user "'||v_username||'" '||
+ ' identified by '||v_username||'''; end;');
+ exception
+ when no_data_found then
+ raise_application_error(-20000,
+ 'You are not authorised to alter employee '||p_empno);
+ end;
+/
